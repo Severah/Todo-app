@@ -51,8 +51,9 @@ function addTaskToDOM(task) {
     taskItem.innerHTML = `
         <span>${task.date} - ${task.text}</span>
         <div>
-            <button onclick="toggleCompleteTask('${task.text}')">Complete</button>
-            <button onclick="deleteTask('${task.text}')">Delete</button>
+            <button onclick="toggleCompleteTask('${task.text}')">Completed</button>
+            <button class="delete-button ${task.completed ? 'hidden' : ''}" onclick="deleteTask('${task.text}')">Delete</button>
+            <button class="update-button ${task.completed ? 'hidden' : ''}" onclick="editTask('${task.text}')">Edit</button>
         </div>
     `;
 
@@ -71,6 +72,20 @@ function toggleCompleteTask(taskText) {
 
     localStorage.setItem('tasks', JSON.stringify(tasks));
     loadTasks();
+}
+
+function editTask(taskText) {
+    const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+    const task = tasks.find(task => task.text === taskText);
+    
+    if (task) {
+        const newTaskText = prompt("Edit your task", task.text);
+        if (newTaskText !== null && newTaskText.trim() !== "") {
+            task.text = newTaskText;
+            localStorage.setItem('tasks', JSON.stringify(tasks));
+            loadTasks();
+        }
+    }
 }
 
 function deleteTask(taskText) {
